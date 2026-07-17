@@ -1,0 +1,15 @@
+networks:
+  produbanco-network:
+    name: produbanco-network
+    external: true
+
+services:
+  backend:
+    build: .
+    container_name: produbanco-backend
+    ports:
+      - "8001:8001"
+    environment:
+      - CRUD_API_URL=http://persistencia:8000
+    networks:
+      - produbanco-network

@@ -1,0 +1,13 @@
+networks:
+  produbanco-network:
+    name: produbanco-network
+    external: true
+
+services:
+  frontend:
+    build: .
+    container_name: produbanco-frontend
+    ports:
+      - "4000:80"
+    networks:
+      - produbanco-network

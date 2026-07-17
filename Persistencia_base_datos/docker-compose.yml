@@ -1,0 +1,37 @@
+networks:
+  produbanco-network:
+    name: produbanco-network
+    external: true
+
+services:
+  # neo4j:
+  #   image: neo4j:5.21.0-community
+  #   container_name: produbanco-neo4j
+  #   ports:
+  #     - "7474:7474"
+  #     - "7687:7687"
+  #   environment:
+  #     - NEO4J_AUTH=neo4j/password
+  #   volumes:
+  #     - neo4j_data:/data
+  #     - neo4j_logs:/logs
+  #   networks:
+  #     - produbanco-network
+
+  persistencia:
+    build: .
+    container_name: produbanco-persistencia
+    ports:
+      - "8000:8000"
+    environment:
+      - NEO4J_URI=neo4j+s://ec9b3902.databases.neo4j.io
+      - NEO4J_USER=neo4j
+      - NEO4J_PASSWORD=EF7oS4a8vi8nzTGAGlpEV9h7apYvuXlDmpHRHvxHqZk
+    # depends_on:
+    #   - neo4j
+    networks:
+      - produbanco-network
+
+# volumes:
+#   neo4j_data:
+#   neo4j_logs:
