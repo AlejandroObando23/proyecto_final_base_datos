@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { UserLocation, ATM, User, HistoryEntry } from '../types';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8001/api/v1'; // Puerto de API Business Rules
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8001/api/v1';
 
 export const api = axios.create({
     baseURL: API_BASE_URL,
@@ -12,6 +12,15 @@ export const api = axios.create({
 
 export const getNearestATM = async (location: UserLocation): Promise<ATM> => {
     const response = await api.post<ATM>('/locator/nearest', {
+        latitude: location.latitude,
+        longitude: location.longitude,
+        servicios_requeridos: []
+    });
+    return response.data;
+};
+
+export const getNearestATMs = async (location: UserLocation): Promise<ATM[]> => {
+    const response = await api.post<ATM[]>('/locator/nearest-list', {
         latitude: location.latitude,
         longitude: location.longitude,
         servicios_requeridos: []

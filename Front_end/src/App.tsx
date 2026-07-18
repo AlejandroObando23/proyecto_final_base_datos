@@ -156,6 +156,13 @@ function App() {
         }
     }, []);
 
+    // Load all ATMs on mount for map display
+    useEffect(() => {
+        getAllATMs()
+            .then(data => setAtmsList(data))
+            .catch(err => console.warn('Error cargando cajeros para el mapa:', err));
+    }, []);
+
     // Initial load map centering
     useEffect(() => {
         if (location && !atm && !loading) {
@@ -394,9 +401,6 @@ function App() {
             }
             alert('Cajero eliminado con éxito');
             loadATMs();
-            if (atm?.id === id) {
-                setAtm(null);
-            }
         } catch (err: any) {
             alert(err.response?.data?.detail || 'Error al eliminar el cajero');
         }
@@ -565,18 +569,25 @@ function App() {
                         </Marker>
                     )}
 
-                    {/* Nearest Static ATM Marker (Tab Localizador) */}
+                    {/* Nearest ATM marker (Tab Localizador) */}
                     {activeTab === 'locator' && atm && (
                         <Marker position={[atm.latitud, atm.longitud]} icon={atmIcon}>
                             <Popup>
                                 <strong>{atm.nombre_ubicacion}</strong><br/>
-                                Cajero Fijo - Saldo: ${atm.saldo_disponible}
+                                {atm.tipo} - Saldo: ${atm.saldo_disponible}<br/>
+                                A {(atm.distancia_metros / 1000).toFixed(2)} km<br/>
+                                <button 
+                                    onClick={() => window.open(`https://www.google.com/maps/dir/?api=1&destination=${atm.latitud},${atm.longitud}`)}
+                                    style={{marginTop:'6px', padding:'6px 12px', background:'#008A4B', color:'#fff', border:'none', borderRadius:'6px', cursor:'pointer', fontSize:'0.8rem', fontWeight:600}}
+                                >
+                                    Abrir en Google Maps
+                                </button>
                             </Popup>
                         </Marker>
                     )}
 
-                    {/* All ATMs (Tab Cajeros) */}
-                    {activeTab === 'cajeros' && atmsList.map((atmItem) => (
+                    {/* All ATMs markers (always visible on map) */}
+                    {atmsList.map((atmItem) => (
                         <Marker 
                             key={atmItem.id} 
                             position={[atmItem.latitud, atmItem.longitud]} 
@@ -587,7 +598,13 @@ function App() {
                                 Código: {atmItem.codigo}<br/>
                                 Tipo: {atmItem.tipo} ({atmItem.estado})<br/>
                                 Saldo: ${atmItem.saldo_disponible}<br/>
-                                Servicios: {atmItem.servicios_ofrecidos?.join(', ')}
+                                Servicios: {atmItem.servicios_ofrecidos?.join(', ')}<br/>
+                                <button 
+                                    onClick={() => window.open(`https://www.google.com/maps/dir/?api=1&destination=${atmItem.latitud},${atmItem.longitud}`)}
+                                    style={{marginTop:'6px', padding:'6px 12px', background:'#008A4B', color:'#fff', border:'none', borderRadius:'6px', cursor:'pointer', fontSize:'0.8rem', fontWeight:600}}
+                                >
+                                    Abrir en Google Maps
+                                </button>
                             </Popup>
                         </Marker>
                     ))}
@@ -608,14 +625,12 @@ function App() {
                 )}
 
                 {/* Tab specific overlay panels */}
-                <div className={`bottom-sheet-wrapper ${sheetCollapsed ? 'collapsed' : ''}`}>
+                {!sheetCollapsed && (
+                <div className="bottom-sheet-wrapper">
                     
-                    {/* Close button (only when expanded) */}
-                    {!sheetCollapsed && (
-                        <button className="sheet-close-btn" onClick={() => setSheetCollapsed(true)} title="Cerrar panel">
-                            <X size={16} />
-                        </button>
-                    )}
+                    <button className="sheet-close-btn" onClick={() => setSheetCollapsed(true)} title="Cerrar panel">
+                        <X size={16} />
+                    </button>
 
                     {/* TAB 1: LOCALIZADOR BANCO */}
                     {activeTab === 'locator' && (
@@ -1058,14 +1073,14 @@ function App() {
                     )}
 
                 </div>
-
-                {/* Reopen button when collapsed */}
-                {sheetCollapsed && (
-                    <button className="sheet-reopen-btn" onClick={() => setSheetCollapsed(false)}>
-                        <ChevronUp size={16} /> Abrir panel
-                    </button>
                 )}
             </div>
+
+            {sheetCollapsed && (
+                <button className="sheet-reopen-btn" onClick={() => setSheetCollapsed(false)}>
+                    <ChevronUp size={16} /> Abrir panel
+                </button>
+            )}
             <div className="bottom-nav">
                 <button 
                     className={`nav-tab ${activeTab === 'locator' ? 'active' : ''}`}

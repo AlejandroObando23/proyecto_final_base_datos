@@ -30,16 +30,11 @@ body, html {
 /* Bottom Sheet Container */
 .bottom-sheet-wrapper {
   position: absolute;
-  bottom: 0;
+  bottom: 65px;
   left: 0;
   right: 0;
   z-index: 1000;
-  pointer-events: none; /* Let map clicks pass through */
-  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.bottom-sheet-wrapper.collapsed {
-  transform: translateY(calc(100% - 0px));
+  pointer-events: none;
 }
 
 .bottom-sheet {
@@ -71,6 +66,7 @@ body, html {
   justify-content: center;
   color: #4a5568;
   z-index: 10;
+  pointer-events: auto;
   transition: background 0.2s;
 }
 
@@ -80,8 +76,8 @@ body, html {
 }
 
 .sheet-reopen-btn {
-  position: absolute;
-  bottom: 8px;
+  position: fixed;
+  bottom: 75px;
   left: 50%;
   transform: translateX(-50%);
   background: white;
@@ -90,7 +86,7 @@ body, html {
   padding: 6px 20px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
   cursor: pointer;
-  z-index: 1001;
+  z-index: 5000;
   pointer-events: auto;
   display: flex;
   align-items: center;
@@ -98,6 +94,7 @@ body, html {
   font-size: 0.8rem;
   font-weight: 600;
   color: #003366;
+  white-space: nowrap;
   transition: box-shadow 0.2s;
 }
 
@@ -422,10 +419,6 @@ body, html {
 /* Adjust map container & bottom sheet for navigation bar */
 .map-container {
   height: calc(100vh - 65px) !important;
-}
-
-.bottom-sheet-wrapper {
-  bottom: 65px !important;
 }
 
 /* Timeline Layout for Usage History */
